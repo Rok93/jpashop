@@ -63,17 +63,19 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") BookForm form) {
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form) {
 
-        Book book = new Book();
-        book.setId(form.getId()); // command + shift + u 를 누르면 특정 단어를 Upper(대문자로 변환) 시킬 수 있다!
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+//        Book book = new Book();
+//        book.setId(form.getId()); // command + shift + u 를 누르면 특정 단어를 Upper(대문자로 변환) 시킬 수 있다!
+//        book.setName(form.getName());
+//        book.setPrice(form.getPrice());
+//        book.setStockQuantity(form.getStockQuantity());
+//        book.setAuthor(form.getAuthor());
+//        book.setIsbn(form.getIsbn());
+//
+//        itemService.saveItem(book);
 
-        itemService.saveItem(book);
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
         return "redirect:items";
     }
 }

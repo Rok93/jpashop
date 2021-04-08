@@ -17,4 +17,7 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type: trace
 
-
+server:
+  error:
+    include-stacktrace: always
+    include-message: always

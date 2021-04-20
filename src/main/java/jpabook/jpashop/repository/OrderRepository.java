@@ -72,11 +72,27 @@ public class OrderRepository {
     public List<Order> findAllWithMemberDelivery() {
         return entityManager.createQuery("select o from Order o" +
                 " join fetch o.member m" +
-                " join fetch o.delivery d", Order.class
-        ).getResultList();
+                " join fetch o.delivery d", Order.class)
+                .getResultList();
     }
 
-//    public List<Order> findAll(OrderSearch orderSearch) {
-//    }
+    public List<Order> findAllWithMemberDelivery(final int offSet, final int limit) {
+        return entityManager.createQuery("select o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d", Order.class)
+                .setFirstResult(offSet)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+        return entityManager.createQuery(
+                "select distinct o from Order o"
+                        + " join fetch o.member m"
+                        + " join fetch o.delivery d"
+                        + " join fetch o.orderItems oi"
+                        + " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
 
 }

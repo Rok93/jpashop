@@ -1,11 +1,15 @@
 package jpabook.jpashop.api;
 
+import static java.util.stream.Collectors.*;
+
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Getter;
@@ -45,7 +49,7 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
         return orders.stream()
             .map(OrderDto::new)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @GetMapping("/api/v3/orders")
@@ -53,7 +57,7 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithItem();
         return orders.stream()
             .map(OrderDto::new)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @GetMapping("/api/v3.1/orders")
@@ -63,7 +67,7 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offSet, limit);
         return orders.stream()
             .map(OrderDto::new)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @GetMapping("/api/v4/orders")
@@ -72,14 +76,31 @@ public class OrderApiController {
     }
 
     /**
-     * Query: 루트 1번, 컬렉션 1번
-     * ToOne 관계들을 먼저 조회하고, 여기서 얻은 식별자 orderId로 ToMany 관계인 `OrderItem`을 한꺼번에 조회
+     * Query: 루트 1번, 컬렉션 1번 ToOne 관계들을 먼저 조회하고, 여기서 얻은 식별자 orderId로 ToMany 관계인 `OrderItem`을 한꺼번에 조회
      * MAP을 사용해서 매칭 성능 향상 O(1)
      */
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_optimization();
     }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository
+            .findAllByDto_flat(); // 우리가 원하는 스펙이 아닌 OrderFlatDto가 아닌, OrderQueryDto로 결과값을 맞추고 싶다면... 노가다 해야한다!
+
+        return flats.stream()
+            .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName()
+                    , o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                mapping(
+                    o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(),
+                        o.getCount()), toList())
+            )).entrySet().stream()
+            .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey()
+                .getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+            .collect(toList());
+    }
+
 
     @Getter
     static class OrderDto {
@@ -99,7 +120,7 @@ public class OrderApiController {
             this.address = order.getMember().getAddress();
             orderItems = order.getOrderItems().stream()
                 .map(OrderItemDto::new)
-                .collect(Collectors.toList());
+                .collect(toList());
         }
     }
 

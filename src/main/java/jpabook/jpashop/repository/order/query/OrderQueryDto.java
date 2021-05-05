@@ -6,8 +6,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(of = "orderId") // 주의 orderId로 동등성 비교를 하게 해줘야 한다!
 public class OrderQueryDto {
 
     private Long orderId;
@@ -25,4 +27,13 @@ public class OrderQueryDto {
         this.address = address;
     }
 
+    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate,
+        OrderStatus orderStatus, Address address, List<OrderItemQueryDto> value) {
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.address = address;
+        this.orderItems = value;
+    }
 }

@@ -1,5 +1,7 @@
 package jpabook.jpashop.repository.order.query;
 
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,12 +15,44 @@ public class OrderQueryRepository {
     private final EntityManager em;
 
     public List<OrderQueryDto> findOrderQueryDtos() {
-        List<OrderQueryDto> results = findOrders();
+        List<OrderQueryDto> results = findOrders(); // query 1번 --> N개
         results.forEach(result -> {
-            List<OrderItemQueryDto> orderItems = findOrderItems(result.getOrderId());
+            List<OrderItemQueryDto> orderItems = findOrderItems(result.getOrderId()); // Query N번
             result.setOrderItems(orderItems);
         });
         return results;
+    }
+
+    public List<OrderQueryDto> findAllByDto_optimization() {
+        List<OrderQueryDto> result = findOrders();
+
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(toOrderIds(result));
+
+        result.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId()))); //쿼리가 총 2번 나간다!
+
+        return result;
+    }
+
+    private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
+        List<OrderItemQueryDto> orderItems = em.createQuery(
+            "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)"
+                +
+                " from OrderItem oi" +
+                " join oi.item i" +
+                " where oi.order.id in :orderIds", OrderItemQueryDto.class) //in 절로 id들을 한번에 대입한다.
+            .setParameter("orderIds", orderIds)
+            .getResultList();
+
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
+            .collect(Collectors.groupingBy(OrderItemQueryDto::getOrderId));
+        return orderItemMap;
+    }
+
+    private List<Long> toOrderIds(List<OrderQueryDto> result) {
+        List<Long> orderIds = result.stream()
+            .map(OrderQueryDto::getOrderId)
+            .collect(Collectors.toList());
+        return orderIds;
     }
 
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {

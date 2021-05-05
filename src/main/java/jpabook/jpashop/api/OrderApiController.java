@@ -34,7 +34,7 @@ public class OrderApiController {
 
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.stream()
-                    .forEach(orderItem -> orderItem.getItem().getName());
+                .forEach(orderItem -> orderItem.getItem().getName());
         }
 
         return all;
@@ -44,31 +44,41 @@ public class OrderApiController {
     public List<OrderDto> orderV2() {
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
         return orders.stream()
-                .map(OrderDto::new)
-                .collect(Collectors.toList());
+            .map(OrderDto::new)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v3/orders")
     public List<OrderDto> orderV3() {
         List<Order> orders = orderRepository.findAllWithItem();
         return orders.stream()
-                .map(OrderDto::new)
-                .collect(Collectors.toList());
+            .map(OrderDto::new)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> orderV3_page(
-            @RequestParam(value = "offSset", defaultValue = "0") int offSet,
-            @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        @RequestParam(value = "offSset", defaultValue = "0") int offSet,
+        @RequestParam(value = "limit", defaultValue = "100") int limit) {
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offSet, limit);
         return orders.stream()
-                .map(OrderDto::new)
-                .collect(Collectors.toList());
+            .map(OrderDto::new)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    /**
+     * Query: 루트 1번, 컬렉션 1번
+     * ToOne 관계들을 먼저 조회하고, 여기서 얻은 식별자 orderId로 ToMany 관계인 `OrderItem`을 한꺼번에 조회
+     * MAP을 사용해서 매칭 성능 향상 O(1)
+     */
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
     }
 
     @Getter
@@ -88,8 +98,8 @@ public class OrderApiController {
             this.orderStatus = order.getStatus();
             this.address = order.getMember().getAddress();
             orderItems = order.getOrderItems().stream()
-                    .map(OrderItemDto::new)
-                    .collect(Collectors.toList());
+                .map(OrderItemDto::new)
+                .collect(Collectors.toList());
         }
     }
 

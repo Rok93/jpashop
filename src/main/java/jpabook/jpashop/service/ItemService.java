@@ -1,13 +1,11 @@
 package jpabook.jpashop.service;
 
-import jpabook.jpashop.domain.item.Book;
+import java.util.List;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

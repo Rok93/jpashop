@@ -1,5 +1,8 @@
 package jpabook.jpashop.api;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
@@ -12,16 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * XToOne의 경우 어떻게 할 것인가??
- * Order
- * Order -> Member (ManyToOne)
- * Order -> Delivery (OneToOne)
- * 스포를 하자면 XToMany 의 경우 복잡해진다!
+ * XToOne의 경우 어떻게 할 것인가?? Order Order -> Member (ManyToOne) Order -> Delivery (OneToOne) 스포를 하자면
+ * XToMany 의 경우 복잡해진다!
  */
 @RestController
 @RequiredArgsConstructor
@@ -40,16 +36,16 @@ public class OrderSimpleApiController {
     public List<SimpleOrderDto> ordersV2() { // 실제로는 바로 List 반환하면 안되지만, 지금은 그것이 핵심이 아니니 넘어간다.
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
         return orders.stream()
-                .map(SimpleOrderDto::new)
-                .collect(Collectors.toList());
+            .map(SimpleOrderDto::new)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v3/simple-orders")
     public List<SimpleOrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithMemberDelivery();
         return orders.stream()
-                .map(SimpleOrderDto::new)
-                .collect(Collectors.toList());
+            .map(SimpleOrderDto::new)
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v4/simple-orders")
@@ -59,6 +55,7 @@ public class OrderSimpleApiController {
 
     @Data
     static class SimpleOrderDto {
+
         private Long id;
         private String name;
         private LocalDateTime orderDate;

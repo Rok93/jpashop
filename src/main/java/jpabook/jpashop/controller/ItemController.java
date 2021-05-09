@@ -1,5 +1,6 @@
 package jpabook.jpashop.controller;
 
+import java.util.List;
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -48,7 +47,8 @@ public class ItemController {
 
     @GetMapping("/items/{itemId}/edit")
     public String updateItemFrom(@PathVariable("itemId") Long itemId, Model model) {
-        Book item = (Book) itemService.findOne(itemId); // 사실 이렇게 캐스팅하는 것이 좋지는 않지만... 단순한 예제를 위해 캐스팅한다
+        Book item = (Book) itemService
+            .findOne(itemId); // 사실 이렇게 캐스팅하는 것이 좋지는 않지만... 단순한 예제를 위해 캐스팅한다
 
         BookForm form = new BookForm();
         form.setId(item.getId());

@@ -1,22 +1,19 @@
 package jpabook.jpashop;
 
-import jpabook.jpashop.domain.*;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import jpabook.jpashop.domain.Address;
+import jpabook.jpashop.domain.Delivery;
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.item.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-
 /**
- * 총 2주문 2개
- * * userA
- * * JPA1 BOOK
- * * JPA2 BOOK
- * * userB
- * * SPRING1 BOOK
- * * SPRING2 BOOK
+ * 총 2주문 2개 * userA * JPA1 BOOK * JPA2 BOOK * userB * SPRING1 BOOK * SPRING2 BOOK
  */
 @Component
 @RequiredArgsConstructor

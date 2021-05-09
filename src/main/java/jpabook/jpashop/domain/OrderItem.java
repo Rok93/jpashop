@@ -1,15 +1,19 @@
 package jpabook.jpashop.domain;
 
+import static javax.persistence.FetchType.LAZY;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import jpabook.jpashop.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.*;
 
 @Getter
 @Setter

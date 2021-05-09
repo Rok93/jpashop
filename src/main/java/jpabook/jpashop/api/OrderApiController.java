@@ -1,7 +1,11 @@
 package jpabook.jpashop.api;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
@@ -17,10 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -97,7 +97,8 @@ public class OrderApiController {
                         o.getCount()), toList())
             )).entrySet().stream()
             .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey()
-                .getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+                .getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(),
+                e.getValue()))
             .collect(toList());
     }
 

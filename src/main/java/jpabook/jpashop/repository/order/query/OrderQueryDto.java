@@ -1,11 +1,10 @@
 package jpabook.jpashop.repository.order.query;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.EqualsAndHashCode;
 
 @Data
@@ -19,7 +18,8 @@ public class OrderQueryDto {
     private Address address;
     private List<OrderItemQueryDto> orderItems;
 
-    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address) {
+    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate,
+        OrderStatus orderStatus, Address address) {
         this.orderId = orderId;
         this.name = name;
         this.orderDate = orderDate;
